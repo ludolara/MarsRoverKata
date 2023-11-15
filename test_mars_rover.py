@@ -1,7 +1,7 @@
 import unittest
 from mars_rover import MarsRover
 from planet import Planet
-from position_tracker import PositionTracker
+from position_tracker import ObstacleDetected, PositionTracker
 from command_handler import CommandHandler
 
 class TestMarsRover(unittest.TestCase):
@@ -122,3 +122,20 @@ class TestMarsRover(unittest.TestCase):
         self.position_tracker.facing = "W"
         self.rover("f")
         self.assertEqual(self.position_tracker.x, self.planet.width-1)
+
+class TestMarsRoverObstacleDetector(unittest.TestCase):
+    def setUp(self):
+        self.planet = Planet(3,3)
+        self.obstacle_position_x = 0
+        self.obstacle_position_y = 2
+        self.planet.add_obstacle(
+            self.obstacle_position_x,
+            self.obstacle_position_y
+        )
+        self.position_tracker = PositionTracker(0,0,"N",self.planet)
+        self.command_handler = CommandHandler(self.position_tracker)
+        self.rover = MarsRover(self.command_handler)
+
+    def test_obstacle_detector_activated(self):
+        with self.assertRaises(ObstacleDetected):
+            self.rover("ff")
