@@ -5,12 +5,13 @@ from command_handler import CommandHandler
 
 class TestMarsRover(unittest.TestCase):
     def setUp(self):
-        position_tracker = PositionTracker(0,0,"N")
-        command_handler = CommandHandler(position_tracker)
-        self.rover = MarsRover(command_handler)
+        self.position_tracker = PositionTracker(1,1,"N")
+        self.command_handler = CommandHandler(self.position_tracker)
+        self.rover = MarsRover(self.command_handler)
 
     def test_command_handler_with_multiple_valid_commands_is_valid(self):
-        self.rover("ffbbllrr")
+        self.rover("bffllrr")
+        self.assertEqual(self.position_tracker.y, 2)
 
     def test_command_handler_with_multiple_invalid_commands_is_invalid(self):
         with self.assertRaisesRegex(ValueError, "Unexpected command"):
@@ -19,3 +20,42 @@ class TestMarsRover(unittest.TestCase):
     def test_command_handler_with_multiple_int_commands_is_invalid(self):
         with self.assertRaisesRegex(ValueError, "Unexpected command"):
             self.rover([111])
+
+    def test_move_forward_from_north(self):
+        self.rover("f")
+        self.assertEqual(self.position_tracker.y, 2)
+
+    def test_move_backward_from_north(self):
+        self.rover("b")
+        self.assertEqual(self.position_tracker.y, 0)
+
+    def test_move_forward_from_east(self):
+        self.position_tracker.facing = "E"
+        self.rover("f")
+        self.assertEqual(self.position_tracker.x, 2)
+
+    def test_move_backward_from_east(self):
+        self.position_tracker.facing = "E"
+        self.rover("b")
+        self.assertEqual(self.position_tracker.x, 0)
+
+    def test_move_forward_from_south(self):
+        self.position_tracker.facing = "S"
+        self.rover("f")
+        self.assertEqual(self.position_tracker.y, 0)
+
+    def test_move_backward_from_south(self):
+        self.position_tracker.facing = "S"
+        self.rover("b")
+        self.assertEqual(self.position_tracker.y, 2)
+
+    def test_move_forward_from_west(self):
+        self.position_tracker.facing = "W"
+        self.rover("f")
+        self.assertEqual(self.position_tracker.x, 0)
+
+    def test_move_backward_from_west(self):
+        self.position_tracker.facing = "W"
+        self.rover("b")
+        self.assertEqual(self.position_tracker.x, 2)
+
