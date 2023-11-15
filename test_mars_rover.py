@@ -4,7 +4,7 @@ from planet import Planet
 from position_tracker import ObstacleDetected, PositionTracker
 from command_handler import CommandHandler
 
-class TestMarsRover(unittest.TestCase):
+class TestMarsRoverReceivesMultipleCommands(unittest.TestCase):
     def setUp(self):
         self.planet = Planet(3,3)
         self.position_tracker = PositionTracker(1,1,"N",self.planet)
@@ -23,6 +23,13 @@ class TestMarsRover(unittest.TestCase):
     def test_command_handler_with_multiple_int_commands_is_invalid(self):
         with self.assertRaisesRegex(ValueError, "Unexpected command"):
             self.rover([111])
+
+class TestMarsRoverReceivesMoveCommand(unittest.TestCase):
+    def setUp(self):
+        self.planet = Planet(3,3)
+        self.position_tracker = PositionTracker(1,1,"N",self.planet)
+        self.command_handler = CommandHandler(self.position_tracker)
+        self.rover = MarsRover(self.command_handler)
 
     def test_move_forward_from_north(self):
         self.rover("f")
@@ -62,6 +69,36 @@ class TestMarsRover(unittest.TestCase):
         self.rover("b")
         self.assertEqual(self.position_tracker.x, 2)
 
+    def test_rover_facing_north_wraps_from_north_to_south_edge_moving_backward_from_origin(self):
+        self.position_tracker.x, self.position_tracker.y = 0,0
+        self.rover("b")
+        self.assertEqual(self.position_tracker.y, self.planet.height-1)
+
+    def test_rover_facing_south_wraps_from_south_to_north_edge_moving_forward_from_origin(self):
+        self.position_tracker.x, self.position_tracker.y = 0,0
+        self.position_tracker.facing = "S"
+        self.rover("f")
+        self.assertEqual(self.position_tracker.y, self.planet.height-1)
+
+    def test_rover_facing_east_wraps_from_east_to_west_edge_moving_backward_from_origin(self):
+        self.position_tracker.x, self.position_tracker.y = 0,0
+        self.position_tracker.facing = "E"
+        self.rover("b")
+        self.assertEqual(self.position_tracker.x, self.planet.width-1)
+
+    def test_rover_facing_west_wraps_from_west_to_east_edge_moving_forward_from_origin(self):
+        self.position_tracker.x, self.position_tracker.y = 0,0
+        self.position_tracker.facing = "W"
+        self.rover("f")
+        self.assertEqual(self.position_tracker.x, self.planet.width-1)
+
+class TestMarsRoverReceivesTurnCommand(unittest.TestCase):
+    def setUp(self):
+        self.planet = Planet(3,3)
+        self.position_tracker = PositionTracker(1,1,"N",self.planet)
+        self.command_handler = CommandHandler(self.position_tracker)
+        self.rover = MarsRover(self.command_handler)
+
     def test_turn_right_from_north_to_east(self):
         self.rover("r")
         self.assertEqual(self.position_tracker.facing, "E")
@@ -99,29 +136,6 @@ class TestMarsRover(unittest.TestCase):
         self.position_tracker.facing = "E"
         self.rover("l")
         self.assertEqual(self.position_tracker.facing, "N")
-
-    def test_rover_facing_north_wraps_from_north_to_south_edge_moving_backward_from_origin(self):
-        self.position_tracker.x, self.position_tracker.y = 0,0
-        self.rover("b")
-        self.assertEqual(self.position_tracker.y, self.planet.height-1)
-
-    def test_rover_facing_south_wraps_from_south_to_north_edge_moving_forward_from_origin(self):
-        self.position_tracker.x, self.position_tracker.y = 0,0
-        self.position_tracker.facing = "S"
-        self.rover("f")
-        self.assertEqual(self.position_tracker.y, self.planet.height-1)
-
-    def test_rover_facing_east_wraps_from_east_to_west_edge_moving_backward_from_origin(self):
-        self.position_tracker.x, self.position_tracker.y = 0,0
-        self.position_tracker.facing = "E"
-        self.rover("b")
-        self.assertEqual(self.position_tracker.x, self.planet.width-1)
-
-    def test_rover_facing_west_wraps_from_west_to_east_edge_moving_forward_from_origin(self):
-        self.position_tracker.x, self.position_tracker.y = 0,0
-        self.position_tracker.facing = "W"
-        self.rover("f")
-        self.assertEqual(self.position_tracker.x, self.planet.width-1)
 
 class TestMarsRoverObstacleDetector(unittest.TestCase):
     def setUp(self):
