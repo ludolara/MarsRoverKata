@@ -1,7 +1,8 @@
 import unittest
+from planet import Planet
 from position_tracker import PositionTracker
 from command_handler import CommandHandler
-from unittest.mock import Mock
+from unittest.mock import Mock, PropertyMock
 
 class TestCommandHandler(unittest.TestCase):
     def setUp(self):

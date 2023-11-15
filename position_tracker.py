@@ -1,9 +1,11 @@
+from planet import Planet
 class PositionTracker:
-    def __init__(self, x: int, y: int, facing: str):
+    def __init__(self, x: int, y: int, facing: str, planet: Planet):
         self._validate_facing(facing)
         self.x = x
         self.y = y
         self.facing = facing
+        self.planet = planet
         self.offset_map = {
             "N": (0, 1),
             "E": (1, 0),
@@ -27,12 +29,12 @@ class PositionTracker:
         return facing_int
     
     def move_forward(self) -> None:
-        self.x += self.offset[0]
-        self.y += self.offset[1]
+        self.x = (self.x + self.offset[0]) % self.planet.width
+        self.y = (self.y + self.offset[1]) % self.planet.height
 
     def move_backward(self) -> None:
-        self.x -= self.offset[0]
-        self.y -= self.offset[1]
+        self.x = (self.x - self.offset[0]) % self.planet.width
+        self.y = (self.y - self.offset[1]) % self.planet.height
     
     def turn_left(self) -> None:
         self.facing = self.compass[(self.facing_int - 1) % len(self.compass)]
