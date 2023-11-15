@@ -6,8 +6,8 @@ class CommandHandler:
         self.movement_map: dict[str, Callable] = {
             "f": movement_map.move_forward,
             "b": movement_map.move_backward,
-            "l": None,
-            "r": None,
+            "l": movement_map.turn_left,
+            "r": movement_map.turn_right,
         }
 
     def __call__(self, command: str):
@@ -15,5 +15,4 @@ class CommandHandler:
             raise ValueError(f"Unexpected command '{command}'")
         
         execute_command: Callable = self.movement_map[command]
-        if execute_command:
-            execute_command()
+        execute_command()

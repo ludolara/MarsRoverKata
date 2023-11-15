@@ -18,9 +18,11 @@ class TestCommandHandler(unittest.TestCase):
 
     def test_command_handler_with_left_command_is_valid(self):
         self.command_handler("l")
+        self.mock_position_tracker.turn_left.assert_called_once()
 
     def test_command_handler_with_right_command_is_valid(self):
         self.command_handler("r")
+        self.mock_position_tracker.turn_right.assert_called_once()
 
     def test_command_handler_with_empty_string_is_invalid(self):
         with self.assertRaisesRegex(ValueError, "Unexpected command"):

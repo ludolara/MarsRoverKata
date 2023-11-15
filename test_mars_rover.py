@@ -10,8 +10,9 @@ class TestMarsRover(unittest.TestCase):
         self.rover = MarsRover(self.command_handler)
 
     def test_command_handler_with_multiple_valid_commands_is_valid(self):
-        self.rover("bffllrr")
+        self.rover("bfflrr")
         self.assertEqual(self.position_tracker.y, 2)
+        self.assertEqual(self.position_tracker.facing, "E")
 
     def test_command_handler_with_multiple_invalid_commands_is_invalid(self):
         with self.assertRaisesRegex(ValueError, "Unexpected command"):
@@ -59,3 +60,40 @@ class TestMarsRover(unittest.TestCase):
         self.rover("b")
         self.assertEqual(self.position_tracker.x, 2)
 
+    def test_turn_right_from_north_to_east(self):
+        self.rover("r")
+        self.assertEqual(self.position_tracker.facing, "E")
+
+    def test_turn_right_from_east_to_south(self):
+        self.position_tracker.facing = "E"
+        self.rover("r")
+        self.assertEqual(self.position_tracker.facing, "S")
+
+    def test_turn_right_from_south_to_west(self):
+        self.position_tracker.facing = "S"
+        self.rover("r")
+        self.assertEqual(self.position_tracker.facing, "W")
+
+    def test_turn_right_from_west_to_north(self):
+        self.position_tracker.facing = "W"
+        self.rover("r")
+        self.assertEqual(self.position_tracker.facing, "N")
+
+    def test_turn_left_from_north_to_west(self):
+        self.rover("l")
+        self.assertEqual(self.position_tracker.facing, "W")
+
+    def test_turn_left_from_west_to_south(self):
+        self.position_tracker.facing = "W"
+        self.rover("l")
+        self.assertEqual(self.position_tracker.facing, "S")
+
+    def test_turn_left_from_south_to_east(self):
+        self.position_tracker.facing = "S"
+        self.rover("l")
+        self.assertEqual(self.position_tracker.facing, "E")
+
+    def test_turn_left_from_east_to_north(self):
+        self.position_tracker.facing = "E"
+        self.rover("l")
+        self.assertEqual(self.position_tracker.facing, "N")
